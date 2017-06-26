@@ -24,14 +24,6 @@ instance Num Nat where
   (-) = minus
   fromInteger = toNat
 
-fromNat :: Nat -> Int
-fromNat = foldn (0, (1+))
-toNat :: Integer -> Nat
-toNat = unfoldn phi
-  where
-    phi x | x <= 0 = Nothing
-          | otherwise = Just (x - 1) 
-
 foldn :: (a, a -> a) -> Nat -> a
 foldn (c, f) Zero = c
 foldn (c, f) (Succ n) = f (foldn (c, f) n)
@@ -41,14 +33,25 @@ unfoldn phi x = case phi x of
   Nothing -> Zero
   Just x' -> Succ (unfoldn phi x')
 
+fromNat :: Nat -> Int
+fromNat = foldn (0, (1+))
+toNat :: Integer -> Nat
+toNat = unfoldn phi
+  where
+    phi x | x <= 0 = Nothing
+          | otherwise = Just (x - 1) 
+
 add :: Nat -> Nat -> Nat
 x `add` y = foldn (x, Succ) y
 mul :: Nat -> Nat -> Nat
 x `mul` y = foldn (Zero, (`add` x)) y
 
 pred' :: Nat -> Nat
-pred' Zero = Zero
-pred' (Succ n) = n
+pred' = unfoldn phi
+  where
+    phi Zero = Nothing
+    phi (Succ Zero) = Nothing
+    phi (Succ x)    = Just x
 
 minus :: Nat -> Nat -> Nat
 x `minus` y = foldn (x, pred') y
@@ -68,3 +71,5 @@ m `divMod` n = (m `div` n, m `mod` n)
 
 sqrt :: Nat -> Nat
 sqrt n = foldn (n, (\x -> (x + n `div` x) `div` 2)) n
+-- :m +Control.Arrow
+-- map (fromNat.sqrt.fromInteger &&& id) [1..100]
