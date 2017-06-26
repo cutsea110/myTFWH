@@ -63,8 +63,8 @@ x `mod` y = foldn (Zero, succ y) x
   where
     succ b a = if a == pred' b then Zero else Succ a
 
-sqrt :: Nat -> Nat
-sqrt n = foldn (n, (\x -> (x + n `div` x) `div` 2)) n
-
 divMod :: Nat -> Nat -> (Nat, Nat)
 m `divMod` n = (m `div` n, m `mod` n)
+
+sqrt :: Nat -> Nat
+sqrt n = foldn (n, (\x -> (x + n `div` x) `div` 2)) n
