@@ -58,8 +58,8 @@ x `div` y = unfoldn phi x
   where
     phi n = if n < y then Nothing else Just (n `minus` y)
 
-mod' :: Nat -> Nat -> Nat
-x `mod'` y = foldn (Zero, succ y) x
+mod :: Nat -> Nat -> Nat
+x `mod` y = foldn (Zero, succ y) x
   where
     succ b a = if a == pred' b then Zero else Succ a
 
@@ -67,7 +67,4 @@ sqrt :: Nat -> Nat
 sqrt n = foldn (n, (\x -> (x + n `div` x) `div` 2)) n
 
 divMod :: Nat -> Nat -> (Nat, Nat)
-m `divMod` n | m < n = (Zero, m)
-              | otherwise = (Succ q, r)
-  where
-    (q, r) = divMod (m - n) n
+m `divMod` n = (m `div` n, m `mod` n)
